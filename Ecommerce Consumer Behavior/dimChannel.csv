@@ -1,0 +1,46 @@
+﻿Kênh_Mua,Thiết_Bị_Mua_Sắm,Phương_Thức_Thanh_Toán,ChannelKey
+Mixed,Tablet,Credit Card,1
+In-Store,Tablet,PayPal,2
+Mixed,Smartphone,Debit Card,3
+Mixed,Smartphone,Other,4
+Mixed,Tablet,Debit Card,5
+Online,Desktop,Debit Card,6
+Online,Desktop,Credit Card,7
+In-Store,Desktop,Cash,8
+Online,Tablet,PayPal,9
+In-Store,Desktop,PayPal,10
+Online,Tablet,Cash,11
+In-Store,Desktop,Debit Card,12
+Online,Desktop,PayPal,13
+Mixed,Smartphone,Credit Card,14
+Mixed,Tablet,PayPal,15
+In-Store,Desktop,Other,16
+In-Store,Smartphone,Debit Card,17
+Mixed,Smartphone,PayPal,18
+Online,Smartphone,Other,19
+In-Store,Tablet,Debit Card,20
+In-Store,Tablet,Other,21
+Online,Desktop,Other,22
+Mixed,Tablet,Other,23
+Online,Smartphone,PayPal,24
+In-Store,Tablet,Cash,25
+Online,Tablet,Other,26
+Mixed,Smartphone,Cash,27
+Online,Tablet,Credit Card,28
+In-Store,Smartphone,Credit Card,29
+Mixed,Desktop,Debit Card,30
+Mixed,Tablet,Cash,31
+In-Store,Tablet,Credit Card,32
+Online,Smartphone,Debit Card,33
+Mixed,Desktop,Cash,34
+Online,Smartphone,Credit Card,35
+Mixed,Desktop,Credit Card,36
+Online,Smartphone,Cash,37
+Mixed,Desktop,Other,38
+Mixed,Desktop,PayPal,39
+In-Store,Smartphone,Cash,40
+In-Store,Smartphone,PayPal,41
+In-Store,Desktop,Credit Card,42
+Online,Tablet,Debit Card,43
+In-Store,Smartphone,Other,44
+Online,Desktop,Cash,45
