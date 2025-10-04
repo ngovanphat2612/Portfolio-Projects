@@ -21,171 +21,165 @@ ORDER BY DoanhThu DESC;
 <img width="440" height="363" alt="image" src="https://github.com/user-attachments/assets/df9ec073-644f-4075-8602-d24364dd0c2f" />
 
 - **Mục tiêu**:
-  - Xác định những nhà hàng mang lại **doanh thu cao nhất**.
-  - Đo lường **số lượng đơn hàng** để so sánh giữa các nhà hàng.
-  - Giúp nhận diện các đối tác (restaurant partner) quan trọng của FoodPanda.
+  - Hiểu nhóm sản phẩm nào phổ biến với từng giới tính.
+  - Xác định phân khúc khách hàng tiềm năng để tối ưu chiến dịch marketing.
+  - Đề xuất chiến lược sản phẩm phù hợp cho từng nhóm giới tính.
 - **Insight**:  
-  - Subway dẫn đầu về cả số đơn hàng (1,260) và doanh thu (≈ 1M). 
-  - KFC và Pizza Hut cạnh tranh sát sao về doanh thu (~989K).
-  </br>-> Điều này cho thấy Subway và KFC là partner chiến lược của FoodPanda, cần ưu tiên trong các chiến dịch marketing & hợp tác.
+  - Khách hàng nữ chi tiêu cao nhất ở nhóm “Jewelry & Accessories”, cho thấy nhu cầu mạnh với thời trang và phụ kiện cá nhân. 
+  - Khách hàng nam tập trung chi tiêu vào đồ gia dụng và thể thao, phản ánh sở thích tiện ích và hoạt động ngoài trời.
+  - Doanh thu từ nhóm Packages (combo sản phẩm) của nữ khá cao → gợi ý triển khai chương trình khuyến mãi combo hoặc quà tặng kèm cho nhóm khách hàng này.
+  </br>-> Tăng cường chiến dịch quảng cáo thời trang – phụ kiện hướng tới nữ giới.
+	</br>-> Đối với nam giới, nên đẩy mạnh quảng bá online cho “Home Appliances” và “Sports & Outdoors”.
 
 
 ---
 
-### 2. Doanh thu theo loại món
+### 2. Sản phẩm nào có tỷ lệ trả hàng cao nhất
 ```DAX
-# Doanh thu theo loại món
-SELECT d.category, COUNT(o.orderId) AS total_orders, SUM(o.price) AS total_revenue
-FROM `Order` o
-JOIN Dish d ON o.dishName = d.dishName AND o.restaurantName = d.restaurantName
-GROUP BY d.category
-ORDER BY total_revenue DESC;
+# Sản phẩm nào có tỷ lệ trả hàng cao nhất
+SELECT p.Danh_Mục_Mua_Hàng, AVG(f.Tỷ_Lệ_Trả_Hàng) AS TyLeTraHang
+FROM factSales f
+JOIN dimProduct p ON f.ProductKey = p.ProductKey
+GROUP BY p.Danh_Mục_Mua_Hàng
+ORDER BY TyLeTraHang DESC;
 ```
-<img width="264" height="121" alt="image" src="https://github.com/user-attachments/assets/4178f9ab-4580-48bc-86e4-045cf4da7394" />
+<img width="317" height="271" alt="image" src="https://github.com/user-attachments/assets/1ca1ce8d-e158-4cf2-a6db-602eeb786631" />
 
 
-- **Mục tiêu**: Phân tích loại món (category) nào mang lại nhiều doanh thu và đơn hàng nhất, từ đó xác định nhóm sản phẩm chủ lực của các nhà hàng.
+- **Mục tiêu**:
+  - Đánh giá chất lượng và mức độ hài lòng của khách hàng theo từng nhóm sản phẩm.
+  - Đề xuất biện pháp giảm tỷ lệ trả hàng để tối ưu chi phí và trải nghiệm khách hàng.
 - **Insight**:
-  - Italian và Continental là 2 nhóm món có doanh thu cao nhất (~1.3M mỗi loại), đồng thời cũng có số đơn hàng nhiều nhất → đây là nhóm đặc sản chính cần tập trung.
-  - Fast Food đứng thứ 3 cả về đơn và doanh thu → phù hợp cho nhóm khách hàng trẻ, ăn nhanh.
-  
+  - “Travel & Leisure (Flights)” có tỷ lệ trả hàng cao nhất (1.32%), cho thấy rủi ro hoàn/hủy giao dịch cao, có thể do chính sách đặt vé linh hoạt hoặc thay đổi kế hoạch cá nhân.
+  - “Gardening & Outdoors” và “Office Supplies” cũng có tỷ lệ trả hàng vượt mức trung bình → khả năng đến từ chất lượng không đồng nhất hoặc mô tả sản phẩm chưa rõ ràng.
+  - Nhóm Electronics, Sports & Outdoors, và Health Care có tỷ lệ trả hàng thấp → đây là nhóm sản phẩm ổn định và đáng tin cậy.
+  </br>-> Tăng chất lượng hình ảnh, mô tả sản phẩm chi tiết cho các danh mục có tỷ lệ trả hàng cao (đặc biệt là Jewelry & Accessories).
+
 ---
 
-### 3. Phân bố khách hàng theo độ tuổi và giới tính
+### 3. Khách hàng trung thành vs không trung thành
 ```DAX
-# Khách hàng theo nhóm tuổi và giới tính
-SELECT c.age, c.gender, COUNT(c.customerId) AS total_customers
-FROM Customer c
-GROUP BY c.age, c.gender
-ORDER BY total_customers DESC;
+# Khách hàng trung thành vs không trung thành
+SELECT c.Giới_Tính, c.Tuổi, AVG(f.Trung_Thành_Thương_Hiệu) AS DiemTrungThanh
+FROM factSales f
+JOIN dimCustomer c ON f.Mã_Khách_Hàng = c.Mã_Khách_Hàng
+GROUP BY c.Giới_Tính, c.Tuổi
+ORDER BY DiemTrungThanh DESC;
 ```
-<img width="236" height="191" alt="image" src="https://github.com/user-attachments/assets/9c9a76ff-500a-4a8c-9a79-200e92e9a735" />
-
-
-- **Mục tiêu**: Phân tích cấu trúc khách hàng theo độ tuổi và giới tính để nhận diện nhóm khách hàng chính, từ đó xây dựng chiến lược marketing phù hợp.
-- **Insight**:  
-  - Nhóm Teenager chiếm tỷ trọng cao nhất (≈ 2,062 khách) → Đây là khách hàng trọng tâm, cần các chiến dịch hướng đến giới trẻ.
-  - Trong nhóm Teenager, Male, Other, Female khá cân bằng → cho thấy phân bổ giới tính tương đối đồng đều.
+<img width="309" height="274" alt="image" src="https://github.com/user-attachments/assets/4d182de6-bdfc-4be8-ac7a-3a20e62c6f4c" />
 
 ---
 
-### 4. Tỷ lệ khách hàng rời bỏ (Churn Rate) theo nhóm tuổi
-```DAX
-# Tỷ lệ khách hàng churned theo nhóm tuổi
-SELECT c.age, COUNT(*) AS total_customers, 
-		SUM(CASE WHEN o.churned='Inactive' THEN 1 ELSE 0 END) AS churned_customers, 
-        ROUND(SUM(CASE WHEN o.churned='Inactive' THEN 1 ELSE 0 END)*100/COUNT(*),2) AS churn_rate_percent
-FROM `Order` o
-JOIN Customer c ON o.customerId = c.customerId
-GROUP BY c.age
-ORDER BY churn_rate_percent DESC;
-```
-<img width="416" height="94" alt="image" src="https://github.com/user-attachments/assets/d64e8b54-7508-4b5e-846a-8f260dcc07a3" />
-
-- **Mục tiêu**: Đo lường tỷ lệ khách hàng rời bỏ dịch vụ (churned) theo từng nhóm tuổi, nhằm xác định đâu là nhóm có rủi ro mất khách hàng cao nhất.
-- **Insight**:  
-  - Nhóm Senior có churn rate cao nhất (51.43%) → nhóm dễ rời bỏ dịch vụ, cần cải thiện trải nghiệm hoặc chương trình chăm sóc khách hàng riêng cho họ.
-  - Churn rate giữa các nhóm tuổi không chênh lệch nhiều (48–51%), nghĩa là rủi ro mất khách hàng phổ biến trên toàn bộ độ tuổi, nhưng Seniors là nhóm cần được ưu tiên giữ chân.
-
----
-### 5. Top 5 món ăn được đặt nhiều nhất
-```DAX
-# Top 5 món được đặt nhiều nhất
-SELECT o.dishName, o.restaurantName, SUM(o.quantity) AS total_quantity, SUM(o.price) AS total_revenue
-FROM `Order` o
-GROUP BY o.dishName, o.restaurantName
-ORDER BY total_quantity DESC
-LIMIT 5;
-```
-<img width="360" height="120" alt="image" src="https://github.com/user-attachments/assets/17bf2b0e-ac32-425b-94c1-63d5a82b946d" />
-
-- **Mục tiêu**: Xác định những món ăn bán chạy nhất trên toàn hệ thống, giúp đánh giá xu hướng khẩu vị khách hàng và hỗ trợ các quyết định về menu, marketing, cũng như tối ưu nguồn nguyên liệu.
-- **Insight**:  
-  - Pasta là món ăn phổ biến nhất, xuất hiện 2 lần trong Top 5 (Subway & Pizza Hut), với tổng lượng đặt hơn 1,700 phần.
-  - Pizza cũng là món hot trend, được đặt nhiều từ Subway và KFC.
-  - Sandwich (Pizza Hut) góp mặt trong top 5, cho thấy khách hàng ưa chuộng món ăn nhanh, tiện lợi.
-
----
-
-### 6. Đánh giá trung bình từng nhà hàng
-```DAX
-# Đánh giá trung bình từng nhà hàng
-SELECT o.restaurantName, AVG(o.rating) AS avg_rating, COUNT(o.rating) AS total_ratings
-FROM `Order` o
-WHERE o.rating IS NOT NULL
-GROUP BY o.restaurantName
-ORDER BY avg_rating DESC;
-```
-<img width="333" height="124" alt="image" src="https://github.com/user-attachments/assets/1d489890-1b4b-4c6f-8749-9899adb47634" />
-
-- **Mục tiêu**: Phân tích mức độ hài lòng của khách hàng đối với từng nhà hàng thông qua điểm rating trung bình. Điều này giúp nhận diện nhà hàng nào đang giữ chân khách hàng tốt và nhà hàng nào cần cải thiện chất lượng dịch vụ/đồ ăn.
-- **Insight**:  
-  - Subway dẫn đầu với mức rating trung bình 2.09/5, tuy nhiên điểm số này vẫn còn thấp → cần chiến lược nâng cao trải nghiệm khách hàng.
-  - KFC và McDonald's có mức rating gần tương đương (~2.0), cho thấy sự cạnh tranh khốc liệt trong phân khúc fast food.
-  </br>->Điểm số trung bình toàn ngành khá thấp (dưới 2.1/5) → khách hàng nhìn chung chưa thực sự hài lòng.
-
----
-
-### 7. Doanh thu theo hình thức thanh toán
-```DAX
-# Doanh thu theo hình thức thanh toán
-SELECT o.paymentMethod, COUNT(o.orderId) AS total_orders, SUM(o.price) AS total_revenue
-FROM `Order` o
-GROUP BY o.paymentMethod
-ORDER BY total_revenue DESC;
-```
-<img width="284" height="82" alt="image" src="https://github.com/user-attachments/assets/4ff1d002-0793-4cf3-aa32-421d13d143a9" />
-
-- **Mục tiêu**: Phân tích hành vi thanh toán của khách hàng để xem kênh nào được ưa chuộng nhất và đóng góp nhiều doanh thu nhất. Thông tin này hỗ trợ việc ưu tiên phát triển và tối ưu hóa các phương thức thanh toán.
-- **Insight**:  
-  - Cash vẫn là hình thức thanh toán phổ biến nhất, chiếm doanh thu cao nhất 1.65M (≈ 34%).
-  - Card và Wallet gần như ngang bằng, với doanh thu ~1.59M và ~1.56M.
-  </br>Xu hướng cho thấy khách hàng đang dần dịch chuyển từ tiền mặt sang các phương thức thanh toán điện tử (Card, Wallet) → gợi ý doanh nghiệp nên tiếp tục đẩy mạnh ưu đãi & tiện ích cho thanh toán không tiền mặt để khuyến khích chuyển đổi.
-
----
-
-### 8. Khách hàng trung thành nhất
-```DAX
-# Khách trung thành nhất
-SELECT o.customerId, MAX(o.orderFrequency) AS max_orders, MAX(o.loyaltyPoints) AS max_points
-FROM `Order` o
-GROUP BY o.customerId
-ORDER BY max_points DESC
-LIMIT 10;
-```
-<img width="253" height="194" alt="image" src="https://github.com/user-attachments/assets/23389bcc-5d9c-4e8c-945c-c6bcddfc6188" />
-
-- **Mục tiêu**: Xác định những khách hàng trung thành nhất, dựa trên loyalty points và tần suất đặt hàng (order frequency). Đây là nhóm khách hàng có giá trị cao cần được chăm sóc đặc biệt.
-- **Insight**:  
-  - Có nhiều khách hàng đạt mức Loyalty Points tối đa (500) → thể hiện mức độ gắn bó rất cao.
-  - Đây chính là nhóm khách hàng VIP, cần được ưu đãi đặc biệt (voucher, chương trình thành viên, khuyến mãi cá nhân hóa).
-  - Việc giữ chân nhóm này sẽ giảm churn rate và duy trì doanh thu ổn định.
-
----
-
-### 9. Doanh thu theo tháng
+### 4. Doanh thu theo tháng
 ```DAX
 # Doanh thu theo tháng
-SELECT MONTH(o.orderDate) AS month, SUM(o.price) AS monthly_revenue
-FROM `Order` o
-GROUP BY MONTH(o.orderDate)
-ORDER BY month;
+SELECT DATE_FORMAT(f.Thời_Gian_Mua_Date, '%Y-%m') AS Month, 
+       SUM(f.Số_Tiền_Mua) AS DoanhThu
+FROM factSales f
+GROUP BY Month
+ORDER BY Month;
 ```
+<img width="262" height="277" alt="image" src="https://github.com/user-attachments/assets/91282911-f7ef-4b8b-91b1-e335e0d410fa" />
 
-<img width="180" height="230" alt="image" src="https://github.com/user-attachments/assets/0d5ac1a8-6376-4ea2-bfd1-55700c90ef3f" />
+---
+### 5. Doanh thu, tần suất mua, độ hài lòng theo giới tính và kênh mua
+```DAX
+# Doanh thu, tần suất mua, độ hài lòng theo giới tính và kênh mua
+SELECT c.Giới_Tính, ch.Kênh_Mua, 
+       SUM(f.Số_Tiền_Mua) AS DoanhThu, AVG(f.Tần_Suất_Mua) AS TB_TanSuatMua,
+       AVG(f.Mức_Độ_Hài_Lòng) AS TB_HaiLong
+FROM factSales f
+JOIN dimCustomer c ON f.Mã_Khách_Hàng = c.Mã_Khách_Hàng
+JOIN dimChannel ch ON f.ChannelKey = ch.ChannelKey
+GROUP BY c.Giới_Tính, ch.Kênh_Mua
+ORDER BY DoanhThu DESC;
+```
+<img width="584" height="276" alt="image" src="https://github.com/user-attachments/assets/4a32eff3-f213-4b53-9c09-10f5025ac39d" />
+
+- **Mục tiêu**:
+  - Xác định nhóm khách hàng tiềm năng nhất theo kênh bán hàng.
+  - Đánh giá hiệu quả từng kênh phân phối (Online, In-Store, Mixed).
+  - Đưa ra định hướng tối ưu chiến lược Marketing & Channel Mix cho từng nhóm giới tính.
+- **Insight**:  
+  - Nữ giới tạo ra doanh thu cao nhất trên tất cả các kênh, đặc biệt là Mixed channel (43.48k) và Online (42.93k)
+  - Nam giới có mức hài lòng trung bình cao hơn một chút (5.69 ở Online), cho thấy nam giới Online có trải nghiệm tốt nhất.
+  - Kênh Online mang lại mức độ hài lòng cao nhất trung bình (≈5.6) → là kênh tiềm năng để mở rộng đầu tư và cá nhân hóa trải nghiệm mua sắm.
+  - In-Store tuy có tần suất mua khá cao (~7.0) nhưng mức hài lòng thấp hơn → cần xem xét các yếu tố về dịch vụ khách hàng, thời gian chờ thanh toán hoặc trưng bày sản phẩm.
+    </br>Tăng đầu tư vào kênh Online & Mixed — đây là nơi doanh thu và hài lòng cao nhất, đặc biệt với nhóm khách hàng nữ.
+    </br>Cải thiện trải nghiệm In-Store, ví dụ: rút ngắn thời gian thanh toán, tăng dịch vụ tư vấn, cá nhân hóa ưu đãi cho khách hàng trung thành.
 
 ---
 
-### 10. Số đơn hàng theo ngày
+### 6. (CASE WHEN) Nhóm khách hàng theo tuổi, thu nhập, tần suất mua
 ```DAX
-# Số đơn hàng theo ngày
-SELECT o.orderDate, COUNT(o.orderId) AS orders_per_day
-FROM `Order` o
-GROUP BY o.orderDate
-ORDER BY o.orderDate;
+# Nhóm khách hàng theo tuổi, thu nhập, tần suất mua
+SELECT
+    CASE 
+        WHEN c.Tuổi < 25 THEN 'Dưới 25'
+        WHEN c.Tuổi BETWEEN 25 AND 34 THEN '25-34'
+        WHEN c.Tuổi BETWEEN 35 AND 44 THEN '35-44'
+        WHEN c.Tuổi BETWEEN 45 AND 54 THEN '45-54'
+        ELSE '55+'
+    END AS Nhom_Tuoi,
+    c.Mức_Thu_Nhập AS ThuNhap,
+    CASE 
+        WHEN f.Tần_Suất_Mua < 2 THEN 'Thấp'
+        WHEN f.Tần_Suất_Mua BETWEEN 2 AND 5 THEN 'Trung Bình'
+        ELSE 'Cao'
+    END AS TanSuatMua,
+    COUNT(DISTINCT c.Mã_Khách_Hàng) AS SoKhachHang,
+    SUM(f.Số_Tiền_Mua) AS DoanhThu,
+    AVG(f.Trung_Thành_Thương_Hiệu) AS DiemTrungThanh
+FROM factSales f
+JOIN dimCustomer c ON f.Mã_Khách_Hàng = c.Mã_Khách_Hàng
+GROUP BY Nhom_Tuoi, ThuNhap, TanSuatMua
+ORDER BY DoanhThu DESC;
 ```
-<img width="208" height="403" alt="image" src="https://github.com/user-attachments/assets/dc482950-1a28-4b8b-98eb-524c0ff172da" />
+<img width="675" height="276" alt="image" src="https://github.com/user-attachments/assets/c5852396-31bb-4507-b5b8-4f6316955e5c" />
 
+- **Mục tiêu**:
+  - Độ tuổi – phản ánh giai đoạn cuộc sống và hành vi tiêu dùng.
+  - Mức thu nhập – ảnh hưởng trực tiếp đến khả năng chi tiêu.
+  - Tần suất mua hàng – biểu thị mức độ gắn bó với thương hiệu.
+- **Insight**:  
+  - Nhóm tuổi 35–44 có thu nhập cao là khách hàng mang lại doanh thu lớn nhất (≈31.6k) — nhóm này có khả năng chi tiêu mạnh và mức độ trung thành ổn định.
+  - Nhóm 25–34 tuổi (thu nhập High & Middle) cũng có doanh thu cao và tần suất mua cao → thể hiện hành vi mua hàng tích cực dù điểm trung thành chưa vượt trội.
+  </br>->Nhóm có tần suất “Cao” chiếm phần lớn doanh thu → cho thấy mối quan hệ chặt chẽ giữa tần suất mua và tổng chi tiêu.
+
+---
+
+### 7. (CTE) Phân tích doanh thu và độ hài lòng theo category và kênh mua
+```DAX
+# Phân tích doanh thu và độ hài lòng theo category và kênh mua
+WITH SalesSummary AS (
+    SELECT 
+        p.Danh_Mục_Mua_Hàng AS Category,
+        ch.Kênh_Mua AS Channel,
+        SUM(f.Số_Tiền_Mua) AS TotalRevenue,
+        AVG(f.Mức_Độ_Hài_Lòng) AS AvgSatisfaction,
+        COUNT(DISTINCT f.Mã_Khách_Hàng) AS NumCustomers
+    FROM factSales f
+    JOIN dimProduct p ON f.ProductKey = p.ProductKey
+    JOIN dimChannel ch ON f.ChannelKey = ch.ChannelKey
+    GROUP BY p.Danh_Mục_Mua_Hàng, ch.Kênh_Mua
+)
+SELECT *
+FROM SalesSummary
+WHERE TotalRevenue > 5000
+ORDER BY TotalRevenue DESC;
+```
+<img width="643" height="222" alt="image" src="https://github.com/user-attachments/assets/5207f8fa-78e6-4e77-875a-8d973745a1e0" />
+
+- **Mục tiêu**: xác định nhóm sản phẩm và kênh bán hàng mang lại giá trị cao nhất để hỗ trợ định hướng chiến lược marketing & bán hàng đa kênh
+- **Insight**:  
+  - Sports & Outdoors (Online) dẫn đầu doanh thu cao nhất (~7,098) nhưng điểm hài lòng chỉ ở mức 5.56/10.
+    </br>→ Sản phẩm bán chạy, tuy nhiên trải nghiệm người dùng chưa thực sự tối ưu → Cải thiện hậu mãi, logistics hoặc chính sách đổi trả để giữ chân khách hàng lâu dài.
+  - Software & Apps (Mixed) có mức độ hài lòng cao nhất điểm hài lòng 6.25 (cao nhất), doanh thu ~6,800.
+  </br>→ Kênh “Mixed” (trực tuyến + cửa hàng) hoạt động hiệu quả, có thể nhờ vào tính linh hoạt và dễ tiếp cận → Tiếp tục mở rộng mô hình bán hàng lai, tăng cường trải nghiệm tích hợp giữa online–offline.
+  - Toys & Games (Online) đạt cân bằng tốt, hài lòng cao (6.48), doanh thu ổn định (~5,900). 
+	</br>→ Khách hàng trẻ, dễ tương tác trực tuyến — tiềm năng lớn để mở rộng thị phần thông qua các chương trình game.
+  - Nhóm In-Store có xu hướng hài lòng thấp hơn: Jewelry & Accessories, Health Supplements có doanh thu ổn nhưng mức hài lòng thấp hơn mức trung bình.
+	</br>→ Có thể do chất lượng dịch vụ tại cửa hàng hoặc giá cả chưa tương xứng → Tăng cường đào tạo nhân viên bán hàng & chính sách khuyến mãi riêng cho kênh offline.
 ---
 # Power BI Dashboard
 
@@ -193,49 +187,60 @@ ORDER BY o.orderDate;
 
 ---
 
+## Model View
+
+<img width="1464" height="779" alt="image" src="https://github.com/user-attachments/assets/aec2a7b9-2daf-4a8a-a9fb-8b121d776008" />
+
+---
+
 ## Measures (DAX)
 
-### 1. Revenue, Orders, Customers
 ```DAX
-Total Revenue = SUM(Orders[price])
-Total Order = SUM(Orders[quantity])
-Total Customer = DISTINCTCOUNT(Customer[customerId])
+% đánh giá = DIVIDE(COUNTROWS(factsales),CALCULATE(COUNTROWS(factsales),REMOVEFILTERS(factsales[Đánh_Giá_Sản_Phẩm])))
+
+% KHTT = DIVIDE(CALCULATE(SUMX(dimcustomer, dimcustomer[TV_CTKHTT]), dimcustomer[TV_CTKHTT] = 1), DISTINCTCOUNT(dimcustomer[Mã_Khách_Hàng]))
+
+% trả hàng = DIVIDE(SUM(factsales[Tỷ_Lệ_Trả_Hàng]), [Total Sales])
+
+Đơn trả lại = SUM(factsales[Tỷ_Lệ_Trả_Hàng])
+
+KH churn = CALCULATE(COUNT(factsales[Đánh_Giá_Sản_Phẩm]), factsales[Đánh_Giá_Sản_Phẩm] < 3)
+
+KHTT = CALCULATE(COUNT(dimcustomer[TV_CTKHTT]), dimcustomer[TV_CTKHTT] = 1)
+
+Prev đơn trả lại = CALCULATE([Đơn trả lại], DATEADD(dimtime[Thời_Gian_Mua_Date], -1, MONTH))
+
+Prev KHTT = CALCULATE([KHTT], DATEADD(dimtime[Thời_Gian_Mua_Date], -1, MONTH))
+
+Prev Month Total Sales = CALCULATE([Total Sales], DATEADD(dimtime[Thời_Gian_Mua_Date], -1, MONTH))
+
+Prev Tần suất mua = CALCULATE(SUM(factsales[Tần_Suất_Mua]), DATEADD(dimtime[Thời_Gian_Mua_Date], -1, MONTH))
+
+Tần suất mua = SUM(factsales[Tần_Suất_Mua])
+
+Total Customers = DISTINCTCOUNT(dimcustomer[Mã_Khách_Hàng])
+
+Total Sales = SUM(factsales[Số_Tiền_Mua])
 ```
-
-→ Tổng doanh thu thực tế thu được từ các đơn hàng  
-
-<img width="861" height="131" alt="image" src="https://github.com/user-attachments/assets/e57620bf-55c6-4f9e-8a53-8debccd9784e" />
+<img width="1415" height="797" alt="image" src="https://github.com/user-attachments/assets/48dcaa99-4efe-4e4f-80c1-7a7ef15d35f0" />
 
 ---
 
-### 2. Doanh thu từ các nhà hàng
-
-<img width="347" height="288" alt="image" src="https://github.com/user-attachments/assets/488ef855-0153-4e1f-94b0-4e6785a2e394" />
+<img width="1418" height="793" alt="image" src="https://github.com/user-attachments/assets/b35edb65-534b-4db2-bc77-4e0a8b7cf23a" />
 
 ---
 
-### 3. Doanh thu và số lần Orders  của tháng này và tháng trước
-
-<img width="624" height="190" alt="image" src="https://github.com/user-attachments/assets/89f37451-b7a1-485d-9f0c-a65a04c0b465" />
+<img width="1417" height="795" alt="image" src="https://github.com/user-attachments/assets/8160fddb-f496-4745-8d76-70e2e5e02a40" />
 
 ---
 
-```DAX
-% Churn = [Churned Customers]/[Total Customer]
-AVG Rating = AVERAGE(Orders[rating])
-Churned Customers = CALCULATE(DISTINCTCOUNT(Customer[customerId]), Orders[churned] = "Inactive")
-Prev Month Order = CALCULATE([Total Order], DATEADD('Date'[date], -1, MONTH))
-Prev Month Revenue = CALCULATE([Total Revenue], DATEADD('Date'[date], -1, MONTH))
-```
+<img width="1415" height="795" alt="image" src="https://github.com/user-attachments/assets/459f47e3-5f18-4cb6-b9c1-805f5beb8035" />
 
 ---
 
-<img width="1294" height="729" alt="image" src="https://github.com/user-attachments/assets/ab584b33-8afd-4bc5-bc92-7c87585783b3" />
+<img width="1416" height="793" alt="image" src="https://github.com/user-attachments/assets/304f9abc-e485-41ef-a18c-4943f1c08b30" />
 
 ---
 
-<img width="1291" height="732" alt="image" src="https://github.com/user-attachments/assets/cc75dfc8-df0c-4a97-ab1e-3f60a9a3e4c2" />
+<img width="1417" height="793" alt="image" src="https://github.com/user-attachments/assets/44ad34b6-7e5d-4c96-a386-f03f1f4a5eb2" />
 
----
-
-<img width="1397" height="715" alt="image" src="https://github.com/user-attachments/assets/3db5fc92-6bc5-42de-82ec-607bf1fb84df" />
